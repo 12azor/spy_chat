@@ -1,65 +1,119 @@
 spy_detail={}
 spy_status_history={}
 status=["Available","Sleeping","Busy","Living The Moment"]
+special_words=["SOS","save_me","help_me","help","save"]
+
 def add_a_status(spy_name):
+    loop=0
     if spy_detail[spy_name]["status"]== "":
         print "\nYou do not have any previous status.\n"
         loop=1
-        if loop==0:
-            print "\nYou already have a status.\n"
-        choice=int(raw_input("Status options. Would you like to:\n1. Choose from pre-defined list of status\n2. Choose from your status history\n3. Create new status\nPress 1 or 2 or 3: "))
-        if choice==1:
-            length=len(status)
-            for i in range(0,length):
-                print "%s. "%(i+1)+status[i]
-            status_1=int(raw_input("Enter the number corresponding to status you want to choose: "))
-            spy_detail[spy_name]["status"]=status[status_1-1]
-            print "\nStatus uploaded successfully\n"
-            spy_status_history[spy_name].append(status[status_1-1])
-        elif choice==2:
-            length=len(spy_status_history[spy_name])
-            if length==0:
-                print "\nYou have no previous status.\n"
-            else:
-                for i in range(0,length):
-                    print "%s. "%(i+1)+spy_status_history[spyname][i]
-                status_1=raw_input("Enter the number corresponding to status you want to choose: ")   
-                spy_detail[spy_name]["status"]=spy_status_history[spyname]["status"][status_1-1]
-                print "\nStatus uploaded successfully\n"
-        elif choice==3:
-            status_1=raw_input("Enter your new status: ")
-            spy_detail[spy_name]["status"]=status_1
-            print "\nStatus uploaded successfully\n"
-            spy_status_history[spy_name].append(status_1)
+    if loop==0:
+        print "\nYou already have a status. Your status is : "+str(spy_detail[spy_name]["status"])
+    choice=int(raw_input("\nStatus options. Would you like to:\n1. Choose from pre-defined list of status\n2. Choose from your status history\n3. Create new status\nPress 1 or 2 or 3: "))
+    if choice==1:
+        length=len(status)
+        for i in range(0,length):
+            print "%s. "%(i+1)+status[i]
+        status_1=int(raw_input("Enter the number corresponding to status you want to choose: "))
+        spy_detail[spy_name]["status"]=status[status_1-1]
+        if spy_detail[spy_name]["status"] not in spy_status_history[spy_name]:
+            spy_status_history[spy_name].append(spy_detail[spy_name]["status"])
+        print "\nStatus uploaded successfully"
+        print "Your status is : "+str(spy_detail[spy_name]["status"])
+    elif choice==2:
+        length=len(spy_status_history[spy_name])
+        if length==0:
+            print "\nYou have no previous status.\n"
         else:
-            print "\nWrong input, Try again"
-        return()
+            for i in range(0,length):
+                print "%s. "%(i+1)+spy_status_history[spy_name][i]
+            status_1=int(raw_input("Enter the number corresponding to status you want to choose: "))
+            spy_detail[spy_name]["status"]=spy_status_history[spy_name][status_1-1]
+            print "\nStatus uploaded successfully"
+            print "Your status is : "+str(spy_detail[spy_name]["status"])
+    elif choice==3:
+        status_1=raw_input("Enter your new status: ")
+        spy_detail[spy_name]["status"]=status_1
+        print "\nStatus uploaded successfully"
+        print "Your status is : "+str(spy_detail[spy_name]["status"])
+        spy_status_history[spy_name].append(status_1)
+        if spy_detail[spy_name]["status"] not in spy_status_history[spy_name]:
+            spy_status_history[spy_name].append(spy_detail[spy_name]["status"])
+    else:
+        print "\nWrong input, Try again"
+    return()
+    
 def add_friend(spy_name):
     f_name=raw_input("Enter your friend's name: ")
     if len(f_name)==0:
         print "Name cannot be empty. Try again.\n"
+        return(0)
     f_age=int(raw_input("Enter your friend's age: "))
     if f_age<12 or f_age>50:
         print "Sorry cannot add friend. Cannot authenticate the age.\n"
+        return(0)
     f_rating=float(raw_input("Enter your friend's rating: "))
     if f_rating<spy_detail[spy_name]["rating"]:
         print "Sorry cannot add friend. Rating not more than yours.\n"
-    spy_detail[spy_name]["friends"].append(f_name)
-    print "\nFriend has been added successfully.\n"
-def send_message(spy_name):
+        return(0)
+    spy_detail[spy_name]["friends"].update({f_name:{"f_age":f_age,"f_rating":f_rating,"chat":{}}})
+    print "\nFriend has been added successfully.\n Details of the recently added friend:\n%s \n"%(f_name)+str(spy_detail[spy_name]["friends"][f_name])
+    return(len(spy_detail[spy_name]["friends"].keys()))
+    
+def select_a_friend(spy_name):
     leng=len(spy_detail[spy_name]["friends"])
     if leng==0:
         print "You have no friends added. \n"
+        return("null")
     else:
         print "You have following people in your friend list: \n"
         for i in range(0,leng):
-            print str(i+1)+". "+str(spy_detail[spy_name]["friends"][i])
-        position=int(raw_input("Enter the number corresponding to your choice of friend to whom you want to send the message: "))
+            print str(i+1)+". "+str(spy_detail[spy_name]["friends"].keys()[i])
+        position=int(raw_input("Enter the number corresponding to your choice of friend to whom you want to communication with: "))
         position=position-1
         if (position<0 or position>=leng):
-            print "You hav entered a wrong input\nTry again.\n"
+            print "You have entered a wrong input\nTry again.\n"
         else:
-            print "The position of the friend in the list is: %i" %(position)
+            return(position)
+def send_a_message(spy_name):
+    position=select_a_friend(spy_name)
+    f_name=spy_detail[spy_name]["friends"].keys()[position]
+    from steganography.steganography import Steganography
+    i_path = "C:\Users\ASUS\Desktop\Acadview\\"
+    i_img_name=raw_input("What is the image name(Type along with the extension)?: ")
+    path=i_path+i_img_name
+    print "your path with specified image name is: "+path
+    o_img_name=raw_input("What name should be the output file?(Type along with extension): ")
+    o_path = "C:\Users\ASUS\Desktop\Acadview\\"
+    output_path=o_path+o_img_name
+    text =raw_input("Enter the TEXT you want to encode: ")
+    from datetime import datetime
+    date=datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+    spy_detail[spy_name]["friends"][f_name]["chat"].update({"communication":"sent","text":text, "time":date,"boolean":True})
+    print "please wait..................................."
+    s=text.strip().split(" ")		
+    Steganography.encode(path, output_path, text)
+    print "\nMessage has been encoded and sent to %s.\n" %(str(spy_detail[spy_name]["friends"].keys()[position]))
+    for i in range(len(s)):
+        for j in range(len(special_words)):
+            if special_words[j]==s[i]:
+                print "Your message was an emergency message.\n"
+                return()
+def read_a_message(spy_name):
+    position= select_a_friend(spy_name)
+    from steganography.steganography import Steganography
+    f_name=spy_detail[spy_name]["friends"].keys()[position]
+    print "Friend %s selected\n" %(f_name)
+    o_img_name=raw_input("What is the name of the output file you want to decode?(Type along with extension): ")
+    o_path = "C:\Users\ASUS\Desktop\Acadview\\"
+    output_path=o_path+o_img_name
+    from datetime import datetime
+    date=datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+    print "please wait...................................."
+    secret_text = Steganography.decode(output_path)
+    print "\nYour secret text is: "+secret_text
+    spy_detail[spy_name]["friends"][f_name]["chat"].update({"communication":"received","text":secret_text, "time":date,"boolean":False})
 while True:
     while True:
         user_choice=int(raw_input("Do you want to continue using a:\n1. Default user.\n2. Create new user.\nEnter 1 or 2: "))
@@ -112,9 +166,12 @@ while True:
                 if menu==1:
                     add_a_status(spy_name)                    
                 elif menu==2:
-                    add_friend(spy_name)                    
+                    friends_count=add_friend(spy_name)
+                    print "You have %i friends as of now.\n" %(friends_count)
                 elif menu==3:
-                    send_message(spy_name)
+                    send_a_message(spy_name)
+                elif menu==4:
+                     read_a_message(spy_name)
                 elif menu==6:
                     print "The program will now Exit."
                     exit()
