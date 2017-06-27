@@ -82,7 +82,7 @@ def send_a_message(spy_name): #method to send an encryted message
     global count
     position=select_a_friend(spy_name) #calls select_a_friend function and stores the value it returns in position variable
     if position=="null":
-        return
+        return(0)
     else:
         f_name=spy_detail[spy_name]["friends"].keys()[position]
         from steganography.steganography import Steganography #imports Steganography
@@ -103,12 +103,16 @@ def send_a_message(spy_name): #method to send an encryted message
         s=text.strip().split(" ")		
         Steganography.encode(path, output_path, text)
         print "\nMessage has been encoded and sent to %s.\n" %(str(spy_detail[spy_name]["friends"].keys()[position]))
-        for i in range(len(s)): #checks for special words in secret text.
+        for i in range(len(s)): #HANDLE TO checks for special words in secret text.
             for j in range(len(special_words)):
                 if special_words[j]==s[i]:
                     print "Your message was an emergency message.\n"
-                    return()
-            
+        if len(text)>100:
+            del spy_detail[spy_name]
+            print "%s has been deleted from dictionary for speaking more than 100 words. Kindly create account again. :)"%(spy_name) #HANDLE FOR DELETING SPY FOR SPEAKING MORE THAN 100 WORDS
+            return(1)
+        else:
+            return(0)
 def read_a_message(spy_name): #method to read the encrypted message.
     global count
     position= select_a_friend(spy_name)  #calls select_a_friend function and stores the value it returns in position variable
@@ -125,10 +129,13 @@ def read_a_message(spy_name): #method to read the encrypted message.
         date=datetime.now().strftime('%Y-%m-%d %H:%M:%S') #stores current date and time
         print "please wait...................................."
         secret_text = Steganography.decode(output_path)
-        print "\nYour secret text is: "+secret_text
-        count=count+1
-        spy_detail[spy_name]["friends"][f_name]["chat"].update({count:{"text":secret_text, "time":date,"boolean":False}}) #stores in chat dictionary under spy_detail dictionary
-        #Boolean= False if message was received.
+        if len(secret_text)==0: #HANDLE FOR NO SECRET TEXT IN IMAGE
+            print "Image has no secret message"
+        else:
+            print "\nYour secret text is: "+secret_text
+            count=count+1
+            spy_detail[spy_name]["friends"][f_name]["chat"].update({count:{"text":secret_text, "time":date,"boolean":False}}) #stores in chat dictionary under spy_detail dictionary
+            #Boolean= False if message was received.
 
 def chat_read(spy_name):
     position= select_a_friend(spy_name)  #calls select_a_friend function and stores the value it returns in position variable
@@ -195,7 +202,9 @@ while True:
                     friends_count=add_friend(spy_name)
                     print "You have %i friends as of now.\n" %(friends_count)
                 elif menu==3:
-                    send_a_message(spy_name)
+                    spy_del=send_a_message(spy_name)
+                    if spy_del==1:
+                        break
                 elif menu==4:
                      read_a_message(spy_name)
                 elif menu==5:
