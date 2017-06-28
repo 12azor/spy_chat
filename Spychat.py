@@ -70,7 +70,7 @@ def select_a_friend(spy_name): #method to select a friend and return position
     else:
         print "You have following people in your friend list: \n"
         for i in range(0,leng):
-            print str(i+1)+". "+str(spy_detail[spy_name]["friends"].keys()[i])
+            print str(i+1)+". "+str(spy_detail[spy_name]["friends"].keys()[i])+"    ONLINE"
         position=int(raw_input("Enter the number corresponding to your choice of friend with whom you want to continue: "))
         position=position-1
         if (position<0 or position>=leng):
