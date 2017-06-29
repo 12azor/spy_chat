@@ -141,7 +141,7 @@ def read_a_message(spy_name):               #method to read the encrypted messag
             print "\nYour secret text is: "+secret_text
             count=count+1
             spy_detail[spy_name]["friends"][f_name]["chat"].update({count:{"secret text":secret_text, "time":date,"Mesaage Read":True}}) #stores in chat dictionary under spy_detail dictionary
-            ######## MESSAGE SENT(Boolean) = True if the message was sent.#########
+            ######## MESSAGE READ(Boolean) = True if the message was read.#########
 
 def chat_read(spy_name):
     position= select_a_friend(spy_name)     #calls select_a_friend function and stores the value it returns in position variable
